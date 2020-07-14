@@ -134,10 +134,13 @@ class Graph:
                 # Then add A PATH TO its neighbors to the back of the queue
                 for neighbor in self.get_neighbors(v):
                   # COPY THE PATH
-                  new_path = list(path)
+                  new_path = path.copy()
                   # APPEND THE NEIGHBOR TO THE BACK
                   new_path.append(neighbor)
                   q.enqueue(new_path)
+        
+        # if we get here, we didn't find the destination vertex      
+        return None
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -169,13 +172,13 @@ class Graph:
                 # then add A PATH TO its neighbors to the stack
                 for neighbor in self.get_neighbors(v):
                     # COPY THE PATH
-                    new_path = list(path)
+                    new_path = path.copy()
                     # APPEND THE NEIGHBOR TO THE BACK
                     new_path.append(neighbor)
                     s.push(new_path)
         
         
-    def dfs_recursive(self, starting_vertex, destination_vertex):
+    def dfs_recursive(self, starting_vertex, destination_vertex, visited=set(), path=[]):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -183,7 +186,25 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        # mark starting vertex as visited
+        visited.add(starting_vertex)
+        
+        # set PATH
+        path = path + [starting_vertex]
+        
+        # if vertex matches what we want, return the path
+        if starting_vertex == destination_vertex:
+            return path
+        
+        # loop throuh vertex neighbors
+        for neighbor in self.get_neighbors(starting_vertex):
+            # if it has not been visited
+            if neighbor not in visited:
+                # recurse on the neighbor
+                new_path = self.dfs_recursive(neighbor, destination_vertex, visited, path)
+                if new_path is not None:
+                    return new_path
+                
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -256,4 +277,5 @@ if __name__ == '__main__':
     '''
     print('DFS path:')
     print(graph.dfs(1, 6))
-    # print(graph.dfs_recursive(1, 6))
+    print('DFS path with recursion...')
+    print(graph.dfs_recursive(1, 6))
